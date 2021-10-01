@@ -1,0 +1,335 @@
+openapi: 3.0.1
+info:
+  title: BPD HB Citizen API
+  description: Api and Models
+  version: ''
+servers:
+  - url: http://api.cstar.pagopa.it/bpd/hb/citizens
+  - url: https://api.cstar.pagopa.it/bpd/hb/citizens
+paths:
+  '/{id}':
+    get:
+      summary: find
+      description: find
+      operationId: find
+      parameters:
+        - name: id
+          in: path
+          description: 'id dell’utente, che corrisponde al codice fiscale'
+          required: true
+          schema:
+            type: string
+        - name: x-request-id
+          in: header
+          description: UUID for request identification
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/CitizenResource'
+              example:
+                enabled: true
+                fiscalCode: string
+                payoffInstr: string
+                payoffInstrType: string
+                timestampTC: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json;charset=UTF-8: { }
+        '404':
+          description: Not Found
+          content:
+            application/json;charset=UTF-8: { }
+        '500':
+          description: ''
+          content:
+            application/json;charset=UTF-8: { }
+    patch:
+      summary: updatePaymentMethod
+      description: updatePaymentMethod
+      operationId: updatePaymentMethod
+      parameters:
+        - name: id
+          in: path
+          description: 'id dell’utente, che corrisponde al codice fiscale'
+          required: true
+          schema:
+            type: string
+        - name: x-request-id
+          in: header
+          description: UUID for request identification
+          schema:
+            type: string
+      requestBody:
+        description: citizen
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CitizenPatchDTO'
+            example:
+              payoffInstr: string
+              payoffInstrType: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CitizenPatchResource'
+              example:
+                validationStatus: string
+        '400':
+          description: ''
+          content:
+            application/json: { }
+        '401':
+          description: Unauthorized
+          content:
+            application/json: { }
+        '500':
+          description: ''
+          content:
+            application/json: { }
+    put:
+      summary: enrollmentCitizenHB
+      description: enrollmentCitizenHB
+      operationId: enrollmentCitizenHB
+      parameters:
+        - name: id
+          in: path
+          description: 'id dell''utente, che corrisponde al codice fiscale'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CitizenResource'
+              example:
+                enabled: true
+                fiscalCode: string
+                payoffInstr: string
+                payoffInstrType: string
+                timestampTC: string
+        '401':
+          description: ''
+          content:
+            application/json: { }
+        '500':
+          description: ''
+          content:
+            application/json: { }
+    delete:
+      summary: delete
+      description: delete
+      operationId: delete
+      parameters:
+        - name: id
+          in: path
+          description: id univoco che corrisponde al codice fiscale dell'utente
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CitizenDeleteResource'
+            example:
+              channel: string
+      responses:
+        '204':
+          description: ''
+        '400':
+          description: ''
+        '409':
+          description: ''
+        '500':
+          description: ''
+  '/{id}/ranking':
+    get:
+      tags:
+        - Bonus Pagamenti Digitali Citizen Controller
+      summary: findRanking
+      description: findRanking
+      operationId: findranking
+      parameters:
+        - name: id
+          in: path
+          description: codice fiscale del cittadino
+          required: true
+          schema:
+            type: string
+        - name: awardPeriodId
+          in: query
+          description: identificativo univoco del periodo di premiazione
+          schema:
+            type: integer
+        - name: x-request-id
+          in: header
+          description: UUID for request identification
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/CitizenRankingResourceArray'
+              examples:
+                default:
+                  value: 
+        '401':
+          description: ''
+          content:
+            application/json;charset=UTF-8: { }
+        '404':
+          description: ''
+          content:
+            application/json;charset=UTF-8: { }
+        '500':
+          description: ''
+          content:
+            application/json;charset=UTF-8: { }
+components:
+  schemas:
+    CitizenDTO:
+      title: CitizenDTO
+      required:
+        - timestampTC
+      type: object
+      properties:
+        timestampTC:
+          type: string
+          description: timestamp dell'accettazione di T&C. FORMATO  ISO8601 yyyy-MM-ddTHH:mm:ss.SSSXXXXX
+          format: date-time
+    CitizenResource:
+      title: CitizenResource
+      required:
+        - enabled
+        - fiscalCode
+        - payoffInstr
+        - payoffInstrType
+        - timestampTC
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          description: stato dell'abilitazione al servizio da parte del citizen
+        fiscalCode:
+          type: string
+          description: 'id dell''utente, che corrisponde al codice fiscale'
+        payoffInstr:
+          type: string
+          description: identificativo dello strumento di pagamento per la riscossione del premio
+        payoffInstrType:
+          type: string
+          description: tipologia di strumento di pagamento per la riscossione del premio
+        timestampTC:
+          type: string
+          description: timestamp dell'accettazione di T&C. FORMATO  ISO8601 yyyy-MM-ddTHH:mm:ss.SSSXXXXX
+          format: date-time
+    CitizenRankingResource:
+      title: CitizenRankingResource
+      required:
+        - totalParticipants
+        - ranking
+        - maxTransactionNumber
+        - minTransactionNumber
+        - transactionNumber
+        - awardPeriodId
+      type: object
+      properties:
+        totalParticipants:
+          type: integer
+          description: numero totale di partecipanti al Bonus Pagamenti Digitali
+          format: int64
+        ranking:
+          type: integer
+          description: posizione della graduatoria riferita al periodo di premiazione corrente
+          format: int64
+        maxTransactionNumber:
+          type: integer
+          description: Numero massimo di transazioni effettuate dagli utenti che rientrano nel 'rimborso speciale'
+          format: int64
+        minTransactionNumber:
+          type: integer
+          description: Numero minimo di transazioni effettuate dagli utenti che rientrano nel 'rimborso speciale'
+          format: int64
+        transactionNumber:
+          type: integer
+          description: Numero di transazioni effettuate dall’utente
+          format: int64
+        awardPeriodId:
+          type: integer
+          description: identificativo univoco del periodo di premiazione
+          format: int64
+    CitizenPatchResource:
+      title: CitizenPatchResource
+      required:
+        - validationStatus
+      type: object
+      properties:
+        validationStatus:
+          type: string
+          description: Stato di validazione a seguito della chiamata al servizio di checkIban.
+    CitizenPatchDTO:
+      title: CitizenPatchDTO
+      required:
+        - accountHolderCF
+        - accountHolderName
+        - accountHolderSurname
+        - payoffInstr
+        - payoffInstrType
+      type: object
+      properties:
+        accountHolderCF:
+          type: string
+          description: CF dell'intestatario dell'IBAN
+        accountHolderName:
+          type: string
+          description: Nome dell'intestatario dell'IBAN
+        accountHolderSurname:
+          type: string
+          description: Cognome dell'intestatario dell'IBAN
+        payoffInstr:
+          type: string
+          description: identificativo dello strumento di pagamento per la riscossione del premio
+        payoffInstrType:
+          enum:
+            - IBAN
+          type: string
+          description: tipologia di strumento di pagamento per la riscossione del premio
+      example: "{\r\n  \"payoffInstr\": \"string\",\r\n  \"payoffInstrType\": \"string\"\r\n}"
+    CitizenDeleteResource:
+      title: CitizenDeleteResource
+      required:
+        - channel
+      type: object
+      properties:
+        channel:
+          type: string
+          description: Canale che identifica univocamente l’issuer che invoca l’API sulla piattaforma. Valorizzato con il codice ABI dell’Issuer chiamante
+    CitizenRankingResourceArray:
+      type: array
+  securitySchemes:
+    apiKeyHeader:
+      type: apiKey
+      name: Ocp-Apim-Subscription-Key
+      in: header
+    apiKeyQuery:
+      type: apiKey
+      name: subscription-key
+      in: query
+security:
+  - apiKeyHeader: [ ]
+  - apiKeyQuery: [ ]

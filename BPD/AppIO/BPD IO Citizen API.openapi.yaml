@@ -1,0 +1,338 @@
+openapi: 3.0.1
+info:
+  title: BPD IO Citizen API
+  description: Api and Models
+  version: ''
+servers:
+  - url: http://api.cstar.pagopa.it/bpd/io/citizen
+  - url: https://api.cstar.pagopa.it/bpd/io/citizen
+paths:
+  /:
+    get:
+      tags:
+        - Bonus Pagamenti Digitali Citizen Controller
+      summary: find
+      description: find
+      operationId: findUsingGET
+      parameters:
+        - name: Authorization
+          in: header
+          description: Bearer Auth Token
+          required: true
+          schema:
+            type: string
+        - name: x-request-id
+          in: header
+          description: UUID for request identification
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/CitizenResource'
+              example:
+                enabled: false
+                fiscalCode: string
+                payoffInstr: string
+                payoffInstrType: string
+                timestampTC: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json;charset=UTF-8: { }
+        '404':
+          description: Not Found
+          content:
+            application/json;charset=UTF-8: { }
+        '500':
+          description: ''
+          content:
+            application/json;charset=UTF-8: { }
+    delete:
+      tags:
+        - Bonus Pagamenti Digitali Citizen Controller
+      summary: delete
+      description: delete
+      operationId: deleteUsingDELETE
+      parameters:
+        - name: Authorization
+          in: header
+          description: Bearer Auth Token
+          required: true
+          schema:
+            type: string
+        - name: x-request-id
+          in: header
+          description: UUID for request identification
+          schema:
+            type: string
+      responses:
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+    patch:
+      tags:
+        - Bonus Pagamenti Digitali Citizen Controller
+      summary: updatePaymentMethod
+      description: updatePaymentMethod
+      operationId: updatePaymentMethodUsingPATCH
+      parameters:
+        - name: Authorization
+          in: header
+          description: Bearer Auth Token
+          required: true
+          schema:
+            type: string
+        - name: x-request-id
+          in: header
+          description: UUID for request identification
+          schema:
+            type: string
+      requestBody:
+        description: citizen
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CitizenPatchDTO'
+            example:
+              accountHolderCF: string
+              accountHolderName: string
+              accountHolderSurname: string
+              payoffInstr: string
+              payoffInstrType: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CitizenPatchResource'
+              example:
+                validationStatus: string
+        '400':
+          description: ''
+          content:
+            application/json: { }
+        '401':
+          description: Unauthorized
+          content:
+            application/json: { }
+        '500':
+          description: ''
+          content:
+            application/json: { }
+    put:
+      tags:
+        - Bonus Pagamenti Digitali enrollment Controller
+      summary: enrollCitizenIO
+      description: enrollCitizenIO
+      operationId: enrollment
+      parameters:
+        - name: Authorization
+          in: header
+          description: Bearer Auth Token
+          required: true
+          schema:
+            type: string
+        - name: x-request-id
+          in: header
+          description: UUID for request identification
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CitizenResource'
+              example:
+                enabled: false
+                fiscalCode: string
+                payoffInstr: string
+                payoffInstrType: string
+                timestampTC: string
+        '401':
+          description: ''
+          content:
+            application/json: { }
+        '500':
+          description: ''
+          content:
+            application/json: { }
+  /ranking:
+    get:
+      tags:
+        - Bonus Pagamenti Digitali Citizen Controller
+      summary: findRanking
+      description: findRanking
+      operationId: findRankingUsingGET
+      parameters:
+        - name: awardPeriodId
+          in: query
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: Bearer Auth Token
+          required: true
+          schema:
+            type: string
+        - name: x-request-id
+          in: header
+          description: UUID for request identification
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/CitizenRankingResource'
+              example:
+                totalParticipants: 0
+                ranking: 0
+        '401':
+          description: Unauthorized
+          content:
+            application/json;charset=UTF-8: { }
+        '404':
+          description: Not Found
+          content:
+            application/json;charset=UTF-8: { }
+        '500':
+          description: ''
+          content:
+            application/json;charset=UTF-8: { }
+components:
+  schemas:
+    CitizenDTO:
+      title: CitizenDTO
+      required:
+        - timestampTC
+      type: object
+      properties:
+        timestampTC:
+          type: string
+          description: timestamp dell'accettazione di T&C. FORMATO  ISO8601 yyyy-MM-ddTHH:mm:ss.SSSXXXXX
+          format: date-time
+    CitizenResource:
+      title: CitizenResource
+      required:
+        - enabled
+        - fiscalCode
+        - payoffInstr
+        - payoffInstrType
+        - timestampTC
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          description: stato dell'abilitazione al servizio da parte del citizen
+        fiscalCode:
+          type: string
+          description: 'id dell''utente, che corrisponde al codice fiscale'
+        payoffInstr:
+          type: string
+          description: identificativo dello strumento di pagamento per la riscossione del premio
+        payoffInstrType:
+          type: string
+          description: tipologia di strumento di pagamento per la riscossione del premio
+        timestampTC:
+          type: string
+          description: timestamp dell'accettazione di T&C. FORMATO  ISO8601 yyyy-MM-ddTHH:mm:ss.SSSXXXXX
+          format: date-time
+      example:
+        enabled: false
+        fiscalCode: string
+        payoffInstr: string
+        payoffInstrType: string
+        timestampTC: string
+    CitizenRankingResource:
+      title: CitizenRankingResource
+      required:
+        - totalParticipants
+        - ranking
+        - maxTransactionNumber
+        - minTransactionNumber
+        - transactionNumber
+        - awardPeriodId
+      type: object
+      properties:
+        totalParticipants:
+          type: integer
+          description: numero totale di partecipanti al Bonus Pagamenti Digitali
+          format: int64
+        ranking:
+          type: integer
+          description: posizione della graduatoria riferita al periodo di premiazione corrente
+          format: int64
+        maxTransactionNumber:
+          type: integer
+          description: Numero massimo di transazioni effettuate dagli utenti che rientrano nel 'rimborso speciale'
+          format: int64
+        minTransactionNumber:
+          type: integer
+          description: Numero minimo di transazioni effettuate dagli utenti che rientrano nel 'rimborso speciale'
+          format: int64
+        transactionNumber:
+          type: integer
+          description: Numero di transazioni effettuate dall’utente
+          format: int64
+        awardPeriodId:
+          type: integer
+          description: identificativo univoco del periodo di premiazione
+          format: int64
+      example:
+        totalParticipants: 0
+        ranking: 0
+    CitizenPatchResource:
+      title: CitizenPatchResource
+      required:
+        - validationStatus
+      type: object
+      properties:
+        validationStatus:
+          type: string
+          description: Stato di validazione a seguito della chiamata al servizio di checkIban.
+    CitizenPatchDTO:
+      title: CitizenPatchDTO
+      required:
+        - accountHolderCF
+        - accountHolderName
+        - accountHolderSurname
+        - payoffInstr
+        - payoffInstrType
+      type: object
+      properties:
+        accountHolderCF:
+          type: string
+          description: CF dell'intestatario dell'IBAN
+        accountHolderName:
+          type: string
+          description: Nome dell'intestatario dell'IBAN
+        accountHolderSurname:
+          type: string
+          description: Cognome dell'intestatario dell'IBAN
+        payoffInstr:
+          type: string
+          description: identificativo dello strumento di pagamento per la riscossione del premio
+        payoffInstrType:
+          enum:
+            - IBAN
+          type: string
+          description: tipologia di strumento di pagamento per la riscossione del premio
+      example:
+        accountHolderCF: string
+        accountHolderName: string
+        accountHolderSurname: string
+        payoffInstr: string
+        payoffInstrType: string
+tags:
+  - name: Bonus Pagamenti Digitali Citizen Controller
+    description: Bpd Citizen Controller Impl

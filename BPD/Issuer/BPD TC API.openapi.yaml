@@ -1,0 +1,75 @@
+openapi: 3.0.1
+info:
+  title: BPD TC API
+  description: Api and Models
+  version: '1.0'
+servers:
+  - url: http://api.cstar.pagopa.it/bpd/tc
+  - url: https://api.cstar.pagopa.it/bpd/tc
+paths:
+  /html:
+    get:
+      tags:
+        - Bonus Pagamenti Digitali File Storage Controller
+      summary: getTermsAndConditionsHTML
+      description: getTermsAndConditions
+      operationId: getTermsAndConditionsUsingGET
+      responses:
+        '200':
+          description: OK
+          content:
+            application/pdf:
+              schema:
+                $ref: '#/components/schemas/InputStreamResource'
+              examples:
+                default:
+                  value: 
+        '404':
+          description: Not Found
+          content:
+            application/pdf: { }
+        '500':
+          description: ''
+          content:
+            application/pdf: { }
+  /pdf:
+    get:
+      summary: getTermsAndConditionsPDF
+      description: getTermsAndConditions
+      operationId: getTermsAndConditionsPDF
+      responses:
+        '200':
+          description: OK
+          content:
+            application/pdf:
+              schema:
+                $ref: '#/components/schemas/InputStreamResource'
+              examples:
+                default:
+                  value: 
+        '404':
+          description: Not Found
+          content:
+            application/pdf: { }
+        '500':
+          description: ''
+          content:
+            application/pdf: { }
+components:
+  schemas:
+    InputStream:
+      title: InputStream
+      type: object
+    InputStreamResource:
+      title: InputStreamResource
+      type: object
+      properties:
+        description:
+          type: string
+        inputStream:
+          $ref: '#/components/schemas/InputStream'
+        read:
+          type: boolean
+tags:
+  - name: Bonus Pagamenti Digitali File Storage Controller
+    description: Bpd File Storage Controller Impl
