@@ -1,0 +1,128 @@
+openapi: 3.0.1
+info:
+  title: FA IO Customer Api
+  description: ''
+  version: '1.0'
+servers:
+  - url: https://api.dev.cstar.pagopa.it/fa/io/customer
+paths:
+  /:
+    get:
+      tags:
+        - FatturazioneAutomatica
+      summary: find
+      description: find
+      operationId: findfindUsingGET
+      parameters:
+        - name: Authorization
+          in: header
+          description: Bearer Auth Token
+          required: true
+          schema:
+            type: string
+        - name: x-request-id
+          in: header
+          description: UUID for request identification
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerResource'
+              example:
+                fiscalCode: string
+                status: string
+                activationDate: string
+        '401':
+          description: ''
+        '404':
+          description: ''
+        '500':
+          description: ''
+    put:
+      tags:
+        - FatturazioneAutomatica
+      summary: enrollCustomerIO
+      operationId: enrollment
+      parameters:
+        - name: Authorization
+          in: header
+          description: Bearer Auth Token
+          required: true
+          schema:
+            type: string
+        - name: x-request-id
+          in: header
+          description: UUID for request identification
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnrollmentCustomerDTO'
+            example:
+              timestampTC: string
+              vatNumber: string
+              sdi: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerResource'
+              example:
+                fiscalCode: string
+                status: string
+                activationDate: string
+        '401':
+          description: ''
+        '500':
+          description: ''
+    delete:
+      tags:
+        - FatturazioneAutomatica
+      summary: delete
+      description: delete
+      operationId: deleteUsingDELETE
+      parameters:
+        - name: Authorization
+          in: header
+          description: Bearer Auth Token
+          required: true
+          schema:
+            type: string
+        - name: x-request-id
+          in: header
+          description: UUID for request identification
+          schema:
+            type: string
+      responses:
+        '204':
+          description: ''
+        '401':
+          description: ''
+components:
+  schemas:
+    CustomerResource:
+      type: object
+      properties:
+        fiscalCode:
+          type: string
+        status:
+          type: string
+        activationDate:
+          type: string
+    EnrollmentCustomerDTO:
+      type: object
+      properties:
+        timestampTC:
+          type: string
+        vatNumber:
+          type: string
+        sdi:
+          type: string
