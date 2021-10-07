@@ -68,11 +68,11 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EnrollmentCustomerDTO'
+              $ref: '#/components/schemas/EnrollmentCustomerDTOArray'
             example:
-              timestampTC: string
-              vatNumber: string
-              sdi: string
+              - vatNumber: string
+                destinationCode: string
+                pec: string
       responses:
         '200':
           description: ''
@@ -90,6 +90,14 @@ paths:
           description: ''
 components:
   schemas:
+    EnrollmentCustomerDTOArray:
+      type: array
+      items:
+        $ref: '#/components/schemas/EnrollmentCustomerDTO'
+      example:
+        - vatNumber: string
+          destinationCode: string
+          pec: string
     CustomerResource:
       type: object
       properties:
@@ -99,15 +107,35 @@ components:
           type: string
         activationDate:
           type: string
+        deactivationDate:
+          type: string
+        vatNumberList:
+          type: array
+          items:
+            type: string
+      example:
+        fiscalCode: string
+        status: string
+        activationDate: string
+        deactivationDate: string
+        vatNumberList:
+          - string
     EnrollmentCustomerDTO:
+      title: EnrollmentCustomerDTO
+      required:
+        - vatNumber
       type: object
       properties:
-        timestampTC:
-          type: string
         vatNumber:
           type: string
-        sdi:
+        destinationCode:
           type: string
+        pec:
+          type: string
+      example:
+        vatNumber: string
+        destinationCode: string
+        pec: string
   securitySchemes:
     apiKeyHeader:
       type: apiKey

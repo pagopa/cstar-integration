@@ -164,11 +164,12 @@ paths:
               surnameHolder: string
               phoneNumber: string
               cryptedPhoneNumber: string
-              serviceStatus: ATT
+              serviceStatus: string
               infoPaymentInstrument:
                 iban: string
-                flagPreferredPaymentPI: true
-                flagPreferredIncomingPI: true
+                flagPreferredPaymentPI: false
+                flagPreferredIncomingPI: false
+              vatNumber: string
       responses:
         '200':
           description: ''
@@ -202,12 +203,13 @@ paths:
               id: string
               fiscalCode: string
               expireYear: 0
-              exprireMonth: string
+              expireMonth: string
               issuerAbiCode: string
-              brand: VISA
+              brand: string
               holder: string
-              type: PP
+              type: string
               channel: string
+              vatNumber: string
       responses:
         '200':
           description: ''
@@ -245,6 +247,7 @@ paths:
               instrumentBrand: string
               additionalInfo: string
               additionalInfo2: string
+              vatNumber: string
       responses:
         '200':
           description: ''
@@ -284,6 +287,7 @@ paths:
             example:
               fiscalCode: string
               channel: string
+              vatNumber: string
       responses:
         '200':
           description: ''
@@ -301,25 +305,6 @@ paths:
           description: ''
 components:
   schemas:
-    PaymentInstrumentResource:
-      title: PaymentInstrumentResource
-      type: object
-      properties:
-        activationDate:
-          type: string
-          format: date-time
-        deactivationDate:
-          type: string
-          format: date-time
-        fiscalCode:
-          type: string
-        hpan:
-          type: string
-        Status:
-          enum:
-            - ACTIVE
-            - INACTIVE
-          type: string
     PatchPaymentInstrumentDto:
       title: PatchPaymentInstrumentDto
       type: object
@@ -338,14 +323,45 @@ components:
         PAR:
           type: string
           description: corrisponde al Payment Account Reference
-    EnrollmentPaymentInstrumentResource:
-      title: EnrollmentPaymentInstrumentResource
+    PaymentInstrumentResource:
+      title: PaymentInstrumentResource
+      required:
+        - status
+        - activationDate
+        - fiscalCode
+        - hpan
       type: object
       properties:
+        status:
+          enum:
+            - ACTIVE
+            - INACTIVE
+          type: string
+          description: 'stato dello strumento di pagamento. Può assumere i seguenti valori:ACTIVE,INACTIVE'
         activationDate:
           type: string
-          description: Timestamp dell’attivazione dello strumento di pagamento. FORMATO  ISO8601 yyyy-MM-ddTHH:mm:ss.SSSXXXXX
+          description: timestamp dell'attivazione dello strumento di pagamento. FORMATO  ISO8601 yyyy-MM-ddTHH:mm:ss.SSSXXXXX
           format: date-time
+        deactivationDate:
+          type: string
+          description: timestamp della disattivazione dello strumento di pagamento. FORMATO  ISO8601 yyyy-MM-ddTHH:mm:ss.SSSXXXXX
+          format: date-time
+        fiscalCode:
+          type: string
+          description: 'id dell''utente, che corrisponde al codice fiscale'
+        hpan:
+          type: string
+          description: 'id dello strumento di pagamento, che corrisponde all''hash del PAN (Primary Account Number) del metodo di pagamento'
+        vatNumber:
+          type: string
+          description: p.iva dell'utente legata allo strumento di pagamento
+      example:
+        status: string
+        activationDate: string
+        deactivationDate: string
+        fiscalCode: string
+        hpan: string
+        vatNumber: string
     PaymentInstrumentOthersBody:
       title: PaymentInstrumentOthersBody
       type: object
@@ -371,14 +387,18 @@ components:
         additionalInfo2:
           type: string
           description: 'ulteriore informazione addizionale, a discrezione dell''issuer, utile all''utente per identificare lo strumento di pagamento'
-    PaymentInstrumentSatispayBody:
-      title: PaymentInstrumentSatispayBody
-      type: object
-      properties:
-        fiscalCode:
+        vatNumber:
           type: string
-        channel:
-          type: string
+          description: p.iva dell'utente legata allo strumento di pagamento
+      example:
+        id: string
+        fiscalCode: string
+        channel: string
+        description: string
+        instrumentBrand: string
+        additionalInfo: string
+        additionalInfo2: string
+        vatNumber: string
     PaymentInstrumentDto:
       title: PaymentInstrumentDto
       type: object
@@ -422,16 +442,20 @@ components:
         channel:
           type: string
           description: canale che identifica univocamente l'issuer sulla piattaforma
+        vatNumber:
+          type: string
+          description: p.iva dell'utente legata allo strumento di pagamento
       example:
         id: string
         fiscalCode: string
         expireYear: 0
-        exprireMonth: string
+        expireMonth: string
         issuerAbiCode: string
         brand: string
         holder: string
         type: string
         channel: string
+        vatNumber: string
     PaymentInstrumentBPayBody:
       title: PaymentInstrumentBPayBody
       type: object
@@ -492,6 +516,51 @@ components:
             flagPreferredIncomingPI:
               type: boolean
               description: Se valorizzato a true indica che lo strumento a cui è associato è stato impostato come strumento di default per i pagamenti in entrata
+        vatNumber:
+          type: string
+          description: p.iva dell'utente legata allo strumento di pagamento
+      example:
+        id: string
+        fiscalCode: string
+        channel: string
+        groupCode: string
+        instituteCode: string
+        bank: string
+        nameHolder: string
+        surnameHolder: string
+        phoneNumber: string
+        cryptedPhoneNumber: string
+        serviceStatus: string
+        infoPaymentInstrument:
+          iban: string
+          flagPreferredPaymentPI: false
+          flagPreferredIncomingPI: false
+        vatNumber: string
+    PaymentInstrumentSatispayBody:
+      title: PaymentInstrumentSatispayBody
+      type: object
+      properties:
+        fiscalCode:
+          type: string
+        channel:
+          type: string
+        vatNumber:
+          type: string
+          description: p.iva dell'utente legata allo strumento di pagamento
+      example:
+        fiscalCode: string
+        channel: string
+        vatNumber: string
+    EnrollmentPaymentInstrumentResource:
+      title: EnrollmentPaymentInstrumentResource
+      type: object
+      properties:
+        activationDate:
+          type: string
+          description: Timestamp dell’attivazione dello strumento di pagamento. FORMATO  ISO8601 yyyy-MM-ddTHH:mm:ss.SSSXXXXX
+          format: date-time
+      example:
+        vatNumber: string
   securitySchemes:
     apiKeyHeader:
       type: apiKey
